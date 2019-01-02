@@ -1,0 +1,16 @@
+[
+{
+  "modid": "simplerfwires",
+  "name": "Simple RF Wires",
+  "description": "Simple RF Wires.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "bymarcin.com",
+  "updateUrl": "",
+  "authorList": ["marcin212"],
+  "credits": "The Forge and FML guys, for making this example",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
