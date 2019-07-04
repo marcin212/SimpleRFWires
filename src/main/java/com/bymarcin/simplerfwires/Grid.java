@@ -1,18 +1,26 @@
 package com.bymarcin.simplerfwires;
 
+import net.minecraftforge.energy.IEnergyStorage;
+
+import java.util.HashSet;
+
 public class Grid {
-    private boolean valid = false;
+    private Boolean valid = true;
+    private HashSet<IEnergyStorage> outputs = new HashSet<>();
 
-
-    public void onChange() {
-
+    public void addOutput(IEnergyStorage output) {
+        outputs.add(output);
     }
 
-    public void getOutputs() {
-
+    public Boolean isValid() {
+        return valid;
     }
 
-    public void recalculate(){
+    public void invalidate() {
+        this.valid = false;
+    }
 
+    public HashSet<IEnergyStorage> getOutputs() {
+        return outputs;
     }
 }
