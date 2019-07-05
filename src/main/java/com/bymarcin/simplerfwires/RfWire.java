@@ -1,9 +1,6 @@
 package com.bymarcin.simplerfwires;
 
-import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -20,9 +17,8 @@ import pl.asie.charset.lib.wires.WireUtils;
 
 import javax.annotation.Nonnull;
 import java.util.*;
-import java.util.stream.StreamSupport;
 
-public class RfWire extends Wire implements ITickable {
+public class RfWire extends Wire {
     private final EnergyStorage[] STORAGE = new EnergyStorage[6];
     public Grid grid;
 
@@ -43,35 +39,6 @@ public class RfWire extends Wire implements ITickable {
         if (grid != null) {
             grid.invalidate();
         }
-        // Thanks asie
-        /*Set<Object> providersTraversed = Collections.newSetFromMap(new IdentityHashMap<>());
-        Queue<EnergyPath> entities = new LinkedList<>();
-        entities.add(new EnergyPath(this).append(getCapability(CapabilityEnergy.ENERGY, sourceFace)));
-
-        while (!entities.isEmpty()) {
-            EnergyPath path = entities.remove();
-            if (path.storage instanceof WireElectric) {
-                for (Pair<ICapabilityProvider, EnumFacing> p : ((WireElectric) path.storage).connectedIterator(true)) {
-                    ICapabilityProvider provider = p.getKey();
-                    if (provider == source || !providersTraversed.add(provider)) continue;
-
-                    EnumFacing facing = p.getValue();
-                    IEnergyStorage storage = provider.hasCapability(CapabilityEnergy.ENERGY, facing) ? provider.getCapability(CapabilityEnergy.ENERGY, facing) : null;
-
-                    if (storage instanceof EnergyStorage) {
-                        entities.add(new EnergyPath(path, ((EnergyStorage) storage).owner)
-                                .append(((WireElectric) path.storage).getCapability(CapabilityEnergy.ENERGY, facing.getOpposite()))
-                                .append(storage)
-                        );
-                    } else {
-                        packet.destinations.add(new EnergyPath(path, storage)
-                                .append(((WireElectric) path.storage).getCapability(CapabilityEnergy.ENERGY, facing.getOpposite()))
-                                .append(storage)
-                        );
-                    }
-                }
-            }
-        }*/
         super.updateConnections();
     }
 
@@ -101,7 +68,7 @@ public class RfWire extends Wire implements ITickable {
                         ((MyEnergyStorage) connection).owner.grid = grid;
                         toTraverse.add(connection);
                     } else {
-                        grid.addOutput(connection);
+                        grid.addOutput(pair);
                         System.out.println("adding output: " + connection);
                     }
                 }
@@ -141,10 +108,5 @@ public class RfWire extends Wire implements ITickable {
         }
 
         return super.getCapability(capability, facing);
-    }
-
-    @Override
-    public void update() {
-
     }
 }
