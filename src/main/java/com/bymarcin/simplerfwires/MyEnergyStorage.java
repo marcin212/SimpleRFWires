@@ -1,6 +1,8 @@
 package com.bymarcin.simplerfwires;
 
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
@@ -31,10 +33,17 @@ public class MyEnergyStorage extends EnergyStorage {
 			owner.updateGrid(facing);
 		}
 		if (owner.grid != null) {
+			BlockPos myPos  = owner.getContainer().pos().offset(facing);
+
 			Set<Pair<ICapabilityProvider, EnumFacing>> outputs = owner.grid.getOutputs();
 			Map<IEnergyStorage, Integer> mapEnergy = new HashMap<>();
 			long sumEnergy = 0;
 			for (Pair<ICapabilityProvider, EnumFacing> provider : outputs) {
+				if(provider.getKey() instanceof TileEntity){
+					if(myPos.equals(((TileEntity) provider.getKey()).getPos())){
+						continue;
+					}
+				}
 				IEnergyStorage storage = getStorage(provider);
 				if (storage == null) continue;
 				int c = storage.receiveEnergy(maxReceive, true);
@@ -48,11 +57,11 @@ public class MyEnergyStorage extends EnergyStorage {
 					if(!simulate) {
 						sent += storage.receiveEnergy((int) (maxReceive * (long)mapEnergy.get(storage) / sumEnergy), false);
 					}else {
-						sent +=(int) (maxReceive * mapEnergy.get(storage) / sumEnergy);
+						sent +=(int) (maxReceive *(long)mapEnergy.get(storage) / (long)sumEnergy);
 					}
 				}
 			}
-			return sent;
+			return sent>0?sent:0;
 		}
 		return 0;
 	}

@@ -36,10 +36,10 @@ public class RfWire extends Wire {
 
     @Override
     protected void updateConnections() {
+        super.updateConnections();
         if (grid != null) {
             grid.invalidate();
         }
-        super.updateConnections();
     }
 
     void updateGrid(EnumFacing face) {
@@ -47,22 +47,34 @@ public class RfWire extends Wire {
         grid = new Grid();
 
         Set<Object> traversed = Collections.newSetFromMap(new IdentityHashMap<>());
+        traversed.add(getContainer().world().getTileEntity(getContainer().pos().offset(face.getOpposite())));
+        traversed.add(getContainer().world().getTileEntity(getContainer().pos().offset(face)));
+        if(getContainer().world().hasCapability(CapabilityEnergy.ENERGY, face.getOpposite())){
+            traversed.add(getContainer().world().getCapability(CapabilityEnergy.ENERGY, face.getOpposite()));
+        }
+        if(getContainer().world().hasCapability(CapabilityEnergy.ENERGY, face)){
+            traversed.add(getContainer().world().getCapability(CapabilityEnergy.ENERGY, face));
+        }
 
         LinkedList<IEnergyStorage> toTraverse = new LinkedList<>();
         toTraverse.add(STORAGE[face.ordinal()]);
 
-        World world = getContainer().world();
 
         while (!toTraverse.isEmpty()) {
             IEnergyStorage o = toTraverse.remove();
             if (!traversed.add(o)) continue;
             if (o instanceof MyEnergyStorage) {
+            	int connections = 0;
+				for (Pair<ICapabilityProvider, EnumFacing> pair : ((MyEnergyStorage) o).owner.connectedIterator(true)){
+					connections++;
+				}
+				System.out.println(connections);
                 for (Pair<ICapabilityProvider, EnumFacing> pair : ((MyEnergyStorage) o).owner.connectedIterator(true)) {
 
                     ICapabilityProvider provider = pair.getLeft();
                     IEnergyStorage connection = provider.hasCapability(CapabilityEnergy.ENERGY, pair.getRight()) ? provider.getCapability(CapabilityEnergy.ENERGY, pair.getRight()) : null;
 
-                    if (connection == null || !traversed.add(provider)) continue;
+                    if (connection == null || !traversed.add(provider) || !toTraverse.add(connection)) continue;
 
                     if (connection instanceof MyEnergyStorage) {
                         ((MyEnergyStorage) connection).owner.grid = grid;

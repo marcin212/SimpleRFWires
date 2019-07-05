@@ -1,7 +1,11 @@
 package com.bymarcin.simplerfwires;
 
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraft.world.gen.structure.MapGenStructureData;
@@ -18,7 +22,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 import org.apache.logging.log4j.Logger;
+import pl.asie.charset.lib.utils.RecipeUtils;
 import pl.asie.charset.lib.utils.RegistryUtils;
 import pl.asie.charset.lib.wires.CharsetLibWires;
 import pl.asie.charset.lib.wires.ItemWire;
@@ -62,6 +69,23 @@ public class SimpleRfWires {
     public void init(FMLInitializationEvent event) {
 
     }
+
+	public static IRecipe createShapedRecipe(ItemStack output, Object... data) {
+		return new ShapelessOreRecipe(output.getItem().getRegistryName(), output, data);
+	}
+
+	@SubscribeEvent
+	public void registerRecipes(RegistryEvent.Register<IRecipe> event) {
+		ItemStack redstone = new ItemStack(Items.REDSTONE, 1,0);
+		ItemStack iron = new ItemStack(Items.IRON_INGOT, 1,0);
+		ItemStack carpet = new ItemStack(Blocks.CARPET, 1,0);
+		ItemStack wire = new ItemStack(itemRfWire, 3,1);
+		event.getRegistry().register(createShapedRecipe(wire,
+				carpet, carpet, carpet,
+				iron, redstone, iron,
+				carpet, carpet, carpet)
+				.setRegistryName(new ResourceLocation(MODID + ":rfsimplewire_recipe")));
+	}
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     @SideOnly(Side.CLIENT)

@@ -26,4 +26,14 @@ public class RfWireProvider extends WireProvider {
     public ResourceLocation getTexturePrefix() {
         return new ResourceLocation("simplerfwires:blocks/wire/outer");
     }
+
+    @Override
+    public boolean hasFreestandingWire() {
+        return true;
+    }
+
+    @Override
+    public boolean hasSidedWire() {
+        return false;
+    }
 }
