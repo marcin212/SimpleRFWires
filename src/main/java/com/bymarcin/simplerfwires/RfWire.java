@@ -93,7 +93,7 @@ public class RfWire extends Wire {
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
         if (capability == CapabilityEnergy.ENERGY) {
-            return facing != null && (connectsExternal(facing) || connectsInternal(facing));
+            return facing != null && (connectsAny(facing));
         }
         return super.hasCapability(capability, facing);
     }
