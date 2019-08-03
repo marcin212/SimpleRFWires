@@ -32,7 +32,8 @@ public class MyEnergyStorage extends EnergyStorage {
 		if (owner.grid == null || !owner.grid.isValid()) {
 			owner.updateGrid(facing);
 		}
-		if (owner.grid != null) {
+		if (owner.grid != null && !owner.grid.isLocked()) {
+			owner.grid.lock();
 			BlockPos myPos  = owner.getContainer().pos().offset(facing);
 
 			Set<Pair<ICapabilityProvider, EnumFacing>> outputs = owner.grid.getOutputs();
@@ -57,11 +58,12 @@ public class MyEnergyStorage extends EnergyStorage {
 					if(!simulate) {
 						sent += storage.receiveEnergy((int) (maxReceive * (long)mapEnergy.get(storage) / sumEnergy), false);
 					}else {
-						sent +=(int) (maxReceive *(long)mapEnergy.get(storage) / (long)sumEnergy);
+						sent += storage.receiveEnergy((int) (maxReceive * (long)mapEnergy.get(storage) / sumEnergy), true); //(int) (maxReceive *(long)mapEnergy.get(storage) / (long)sumEnergy);
 					}
 				}
 			}
-			return sent>0?sent:0;
+			owner.grid.unLock();
+			return Math.max(sent, 0);
 		}
 		return 0;
 	}

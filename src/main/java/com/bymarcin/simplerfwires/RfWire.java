@@ -43,18 +43,18 @@ public class RfWire extends Wire {
     }
 
     void updateGrid(EnumFacing face) {
-        System.out.println("===========update grid===========");
+        //System.out.println("===========update grid===========");
         grid = new Grid();
 
         Set<Object> traversed = Collections.newSetFromMap(new IdentityHashMap<>());
-        traversed.add(getContainer().world().getTileEntity(getContainer().pos().offset(face.getOpposite())));
+        //traversed.add(getContainer().world().getTileEntity(getContainer().pos().offset(face.getOpposite())));
         traversed.add(getContainer().world().getTileEntity(getContainer().pos().offset(face)));
         if(getContainer().world().hasCapability(CapabilityEnergy.ENERGY, face.getOpposite())){
             traversed.add(getContainer().world().getCapability(CapabilityEnergy.ENERGY, face.getOpposite()));
         }
-        if(getContainer().world().hasCapability(CapabilityEnergy.ENERGY, face)){
-            traversed.add(getContainer().world().getCapability(CapabilityEnergy.ENERGY, face));
-        }
+//        if(getContainer().world().hasCapability(CapabilityEnergy.ENERGY, face)){
+//            traversed.add(getContainer().world().getCapability(CapabilityEnergy.ENERGY, face));
+//        }
 
         LinkedList<IEnergyStorage> toTraverse = new LinkedList<>();
         toTraverse.add(STORAGE[face.ordinal()]);
@@ -64,11 +64,11 @@ public class RfWire extends Wire {
             IEnergyStorage o = toTraverse.remove();
             if (!traversed.add(o)) continue;
             if (o instanceof MyEnergyStorage) {
-            	int connections = 0;
-				for (Pair<ICapabilityProvider, EnumFacing> pair : ((MyEnergyStorage) o).owner.connectedIterator(true)){
-					connections++;
-				}
-				System.out.println(connections);
+//            	int connections = 0;
+//				for (Pair<ICapabilityProvider, EnumFacing> pair : ((MyEnergyStorage) o).owner.connectedIterator(true)){
+//					connections++;
+//				}
+//				System.out.println(connections);
                 for (Pair<ICapabilityProvider, EnumFacing> pair : ((MyEnergyStorage) o).owner.connectedIterator(true)) {
 
                     ICapabilityProvider provider = pair.getLeft();
@@ -81,14 +81,14 @@ public class RfWire extends Wire {
                         toTraverse.add(connection);
                     } else {
                         grid.addOutput(pair);
-                        System.out.println("adding output: " + connection);
+                       // System.out.println("adding output: " + connection);
                     }
                 }
             }
         }
-        System.out.println("gird stats:");
-        System.out.println("outputs: " + grid.getOutputs().size());
-        System.out.println("------------");
+//        System.out.println("gird stats:");
+//        System.out.println("outputs: " + grid.getOutputs().size());
+//        System.out.println("------------");
     }
 
     @Override
